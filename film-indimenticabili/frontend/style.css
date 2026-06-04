@@ -1,0 +1,231 @@
+/* Struttura della griglia principale */
+.griglia-film {
+  display: grid;
+  /* Crea colonne flessibili automatiche. Minimo 250px di larghezza l'una */
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 24px; /* Spazio tra le card */
+  padding: 20px;
+}
+
+/* Stile della singola Card */
+.card-film {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+/* Contenitore dell'immagine: 
+forza il rapporto di forma 2:3 delle
+locandine standard ufficiale delle locandine dei cinema */
+.card-image-wrapper {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border-radius: 12px; /* Angoli arrotondati, smussati anche per l'immagine */
+  overflow: hidden;
+}
+
+/* L'immagine si adatta perfettamente riempiendo lo spazio senza deformarsi */
+.card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+/* piccolo zoom quando passi sopra il mouse sulla card */
+.card-film:hover .card-img {
+  transform: scale(1.03);
+}
+
+/* Contenitore dei testi sotto la foto */
+.card-content {
+  padding: 12px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Dettagli dei testi */
+.film-genre {
+  font-size: 12px;
+  color: #717171;
+  text-transform: uppercase;
+}
+
+.film-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #222222;
+  margin-bottom: 4px;
+}
+
+.card-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 14px;
+  color: #222222;
+}
+
+.film-price strong {
+  font-weight: 600;
+}
+
+.film-seats,
+.film-id {
+  font-size: 13px;
+  color: #717171;
+}
+
+.btn-prenota {
+  background-color: rgb(85, 78, 78);
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 10px;
+
+  transition: background-color 0.4s ease;
+}
+
+.btn-prenota:hover {
+  background-color: rgb(66, 70, 67);
+}
+
+.btn-aggiungi {
+  background-color: rgb(13, 210, 49);
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: background-color 0.4s ease;
+}
+
+.btn-aggiungi:hover {
+  background-color: rgb(9, 150, 35);
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between; /* Spinge il titolo a sinistra e i dati a destra */
+  align-items: center;            /* Allinea verticalmente al centro */
+  padding: 15px 30px;
+  position: relative;             /* Fondamentale: fa da punto di riferimento per il centro */
+  min-height: 80px;               /* Dà un'altezza minima stabile all'header */
+}
+
+.header-container h1 {
+  color: #2c3e50;
+  font-size: 28px;
+  margin-bottom: 5px;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #eceff1;
+  max-width: 320px;
+  margin: 10 auto;
+  border-radius: 8px;
+  justify-content: center;
+  margin: 0;
+  font-size: 24px;
+}
+
+.header-container h2 {
+  color: #2c3e50;
+  background-color: #f8f9fa;
+  max-width: 180px;
+  margin: 10 auto;
+  margin-bottom: 5px;
+  border-radius: 4px;
+  justify-content: center;
+}
+
+.header-container h3 {
+  color: red;
+  background-color: #f8f9fa;
+  max-width: 110px;
+  margin: 10 auto;
+  margin-bottom: 5px;
+  border-radius: 8px;
+  justify-content: center;
+}
+
+.search-container {
+  position: absolute;             /* Sgancia la barra dal flusso per non farla spingere dagli altri blocchi */
+  left: 50%;                      /* La sposta al centro esatto della pagina */
+  transform: translateX(-50%);    /* Centratura perfetta calcolando la larghezza della barra stessa */
+  width: 100%;
+  max-width: 400px;               /* Scegli la larghezza che preferisci per la barra */
+  margin: 0;                      /* Rimuove vecchi margini che potrebbero sballare la posizione */
+}
+
+#search-bar {
+  width: 100%;
+  padding: 10px 20px;
+  font-size: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 25px;
+  outline: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+}
+
+#search-bar:focus {
+  border-color: #2c3e50;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* L'ombra aumenta quando scrivi */
+}
+
+/* Gestione della colonna di destra */
+.custom-flex {
+  display: flex !important;
+  flex-direction: column !important; /* Mette gli elementi uno sotto l'altro */
+  align-items: flex-end !important;  /* Li allinea tutti verso destra */
+  gap: 10px !important;              /* Crea lo spazio verticale corretto tra i tre elementi */
+  margin: 0;
+  padding: 0;
+}
+
+/* Rimuove i margini di default che distanziano troppo i testi */
+.custom-flex h2, 
+.custom-flex h3 {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 16px !important;
+  line-height: 1.2 !important;
+}
+
+/* Forza il carrello a stare in riga senza scappare in alto */
+.counter-carrello {
+  position: static !important;       /* Cancella il vecchio position: absolute */
+  display: inline-block !important;
+  background-color: #27ae60 !important; /* Colore Verde */
+  color: white !important;
+  padding: 8px 16px !important;
+  border-radius: 20px !important;
+  font-size: 14px !important;
+  font-weight: bold !important;
+  border: none !important;
+  white-space: nowrap !important;    /* Impedisce al testo di andare a capo da solo */
+}
+
+/* Colore dei film prenotati */
+#film-booked {
+  color: #2c3e50;
+  font-weight: bold;
+}
+
+/* Colore rosso per il totale delle spese */
+.custom-flex h3 {
+  color: #e74c3c !important;
+}

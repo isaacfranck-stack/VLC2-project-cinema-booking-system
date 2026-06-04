@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VLC2 CINEMA</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <div class="header-container">
+        <h1>FILM INDIMENTICABILI</h1>
+        <div class="search-container">
+          <input
+            type="text"
+            id="search-bar"
+            placeholder="Cerca un film per titolo..."
+          />
+        </div>
+        <div class="custom-flex">
+          <h2><span id="film-booked">0 Film Prenotati</span></h2>
+          <div id="carrello" class="counter-carrello">0 Carrello</div>
+          <h3>Totale Spese: <span id="totale-prezzo">€0.00</span></h3>
+        </div>
+      </div>
+    </header>
+    <form id="form-movies">
+      <main>
+        <section class="column">
+          <div id="lista-film" class="griglia-film"></div>
+        </section>
+      </main>
+    </form>
+  </body>
+</html>
+
+<script>
+  let Allmovie = [];
+  let spesefilm = [];
+  let filmAgg = [];
+  let filmBooked = [];
+
+  async function renderizzaMovies() {
+    try {
+      const response = await fetch("http://localhost:3000/movies");
+      if (!response.ok) {
+        throw new Error(`Errore server: ${response.status}`);
+      }
+      Allmovie = await response.json();
+
+      aggiornaFilmcarrello();
+      aggiornaFilmPrenotati();
+      renderizzaFilm(Allmovie);
+    } catch (error) {
+      console.error("Errore nel caricamento dati:", error);
+    }
+  }
+
+  const carrellAgg = document.getElementById("carrello");
+  const listaFilm = document.getElementById("lista-film");
+  const filmPrenotati = document.getElementById("film-booked");
+
+  function aggiornaFilmcarrello() {
+    carrellAgg.innerText = `${filmAgg.length} Film nel carrello`;
+  }
+  function aggiornaFilmPrenotati() {
+    filmPrenotati.innerText = `${filmBooked.length} Film prenotati`;
+  }
+  function aggiornaTotale() {
+    const totale = spesefilm.reduce(
+      (somma, film) => somma + parseFloat(film.price || 0),
+      0,
+    );
+    document.getElementById("totale-prezzo").textContent =
+      `€${totale.toFixed(2)}`;
+  }
+
+  function funzioneFiltraFilm(testo) {
+    return Allmovie.filter((movie) =>
+      movie.title.toLowerCase().includes(testo),
+    );
+  }
+
+  const searchBar = document.getElementById("search-bar");
+
+  searchBar.addEventListener("input", (e) => {
+    const testoCercato = e.target.value.toLowerCase().trim();
+    const filmFiltrati = funzioneFiltraFilm(testoCercato);
+    renderizzaFilm(filmFiltrati);
+  });
+
+  function renderizzaFilm(listamovie) {
+    const filmGrid = document.getElementById("lista-film");
+    filmGrid.innerHTML = "";
+
+    listamovie.forEach((item) => {
+      const filmDiv = document.createElement("div");
+      filmDiv.className = "card-film";
+
+      filmDiv.innerHTML = `
+      <div class="card-image-wrapper">
+        <img src="${item.image}" class="card-img" alt="${item.title}">
+      </div>
+      <div class="card-content">
+        <span class="film-genre">${item.genre}</span>
+        <div class="film-title">${item.title}</div>
+        <div class="card-footer">
+          <span class="film-price">A partire da <strong>${item.price}€</strong></span>
+          <span class="film-seats">Posti Disponibili: ${item.availableSeats}</span>
+          <span class="film-id">ID: ${item.id}</span>
+        </div>
+        <div class="card-button">
+            <button class="btn-prenota" type="button">Prenota</button>
+            <button class="btn-aggiungi" type="button">Aggiungi</button>
+          </div>
+      </div>
+    `;
+
+      const bottoneAggiungi = filmDiv.querySelector(".btn-aggiungi");
+      const bottonePrenota = filmDiv.querySelector(".btn-prenota");
+
+      const aggiornaStatoPulsante = () => {
+        const prenotatiOra = filmBooked.filter(
+          (film) => film.id === item.id,
+        ).length;
+
+        if (item.availableSeats <= 0 || prenotatiOra >= item.availableSeats) {
+          bottonePrenota.disabled = true;
+          bottonePrenota.innerText = "Esaurito";
+        } else {
+          bottonePrenota.disabled = false;
+          bottonePrenota.innerText = "Prenota";
+        }
+      };
+
+      aggiornaStatoPulsante();
+
+      bottonePrenota.addEventListener("click", () => {
+        const prenotatiOra = filmBooked.filter(
+          (film) => film.id === item.id,
+        ).length;
+
+        if (prenotatiOra >= item.availableSeats || item.availableSeats <= 0) {
+          alert(
+            `Attenzione! Hai raggiunto il numero massimo di posti disponibili per il film: ${item.title}`,
+          );
+          aggiornaStatoPulsante();
+          return;
+        }
+
+        filmBooked.push(item);
+        spesefilm.push(item);
+        aggiornaFilmPrenotati();
+        aggiornaTotale();
+
+        aggiornaStatoPulsante();
+      });
+
+      bottoneAggiungi.addEventListener("click", () => {
+        filmAgg.push(item);
+        spesefilm.push(item);
+        aggiornaFilmcarrello();
+        aggiornaTotale();
+      });
+
+      filmGrid.appendChild(filmDiv);
+    });
+  }
+  renderizzaMovies();
+</script>
